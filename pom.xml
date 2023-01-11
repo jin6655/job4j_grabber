@@ -16,7 +16,24 @@
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
+  <profiles>
+    <profile>
+      <id>production</id>
+      <properties>
+        <db.url>jdbc:postgresql://localhost/rabbit</db.url>
+        <db.username>postgres</db.username>
+        <db.password>tRonheart32</db.password>
+        <db.driver>org.postgresql.Driver</db.driver>
+      </properties>
+    </profile>
+  </profiles>
+
   <dependencies>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.5.1</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

@@ -1,15 +1,16 @@
 package ru.job4.quartz;
 
 import org.quartz.*;
-import org.quartz.impl.StdScheduler;
 import org.quartz.impl.StdSchedulerFactory;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.SQLOutput;
+import java.sql.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.quartz.JobBuilder.*;
@@ -18,9 +19,18 @@ import static org.quartz.SimpleScheduleBuilder.*;
 
 public class AlertRabbit {
 
-    public int readTime() {
+    private static Map<String, String> map = new HashMap<>();
+
+    /*Доработайте класс AlertRabbit. Добавьте в файл rabbit.properties настройки для базы данных.
+2. Создайте sql schema с таблицей rabbit и полем created_date.
+3. При старте приложения создайте connect к базе и передайте его в Job.
+4. В Job сделайте запись в таблицу, когда выполнена Job.
+5. Весь main должен работать 10 секунд.
+6. Закрыть коннект нужно в блоке try-with-resources.
+     */
+
+    public static void readProperties() {
         Path file = Paths.get(".\\src\\main\\resources\\rabbit.properties");
-        Map<String, String> map = new HashMap<>();
         try (BufferedReader read = new BufferedReader(new FileReader(file.toFile()))) {
             while (read.ready()) {
                 String[] str = read.readLine().split("=");
@@ -29,31 +39,62 @@ public class AlertRabbit {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return Integer.valueOf(map.get("rabbit.interval"));
+    }
+
+    public static Connection connect() throws Exception {
+        Class.forName(map.get("driver"));
+        String url = map.get("url");
+        String login = map.get("login");
+        String password = map.get("password");
+        return DriverManager.getConnection(url, login, password);
     }
 
     public static void main(String[] args) {
+        readProperties();
+        int interval = Integer.valueOf(map.get("rabbit.interval"));
         try {
+            Connection cn = connect();
             Scheduler sheduler  = StdSchedulerFactory.getDefaultScheduler();
             sheduler.start();
-            JobDetail job = newJob(RAbbit.class).build();
+            JobDataMap data = new JobDataMap();
+            data.put("connect", cn);
+            JobDetail job = newJob(Rabbit.class)
+                    .usingJobData(data)
+                    .build();
             SimpleScheduleBuilder times = simpleSchedule()
-                    .withIntervalInSeconds(new AlertRabbit().readTime())
+                    .withIntervalInSeconds(interval)
                     .repeatForever();
             Trigger trigger = newTrigger()
                     .startNow()
                     .withSchedule(times)
                     .build();
-            sheduler.scheduleJob(job,trigger);
-        } catch (SchedulerException e) {
-            e.printStackTrace();
+            sheduler.scheduleJob(job, trigger);
+            Thread.sleep(15000);
+            sheduler.shutdown();
+        } catch (Exception se) {
+            se.printStackTrace();
         }
     }
 
-    public static class RAbbit implements Job {
+    public static class Rabbit implements Job {
+
+        private Timestamp date;
+
+        public Rabbit() {
+            date = new Timestamp(System.currentTimeMillis());
+            System.out.println("Запуск программы " + date);
+        }
+
         @Override
-        public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        public void execute(JobExecutionContext context) throws JobExecutionException {
             System.out.println("Rabbit runs here ...");
+            Connection connect = (Connection) context.getJobDetail().getJobDataMap().get("connect");
+            try (PreparedStatement statement = connect.prepareStatement("insert into rabbit(created_date) values (?)")) {
+                    statement.setTimestamp(1, date);
+                    statement.execute();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
