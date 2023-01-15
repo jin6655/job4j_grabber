@@ -21,14 +21,6 @@ public class AlertRabbit {
 
     private static Map<String, String> map = new HashMap<>();
 
-    /*Доработайте класс AlertRabbit. Добавьте в файл rabbit.properties настройки для базы данных.
-2. Создайте sql schema с таблицей rabbit и полем created_date.
-3. При старте приложения создайте connect к базе и передайте его в Job.
-4. В Job сделайте запись в таблицу, когда выполнена Job.
-5. Весь main должен работать 10 секунд.
-6. Закрыть коннект нужно в блоке try-with-resources.
-     */
-
     public static void readProperties() {
         Path file = Paths.get(".\\src\\main\\resources\\rabbit.properties");
         try (BufferedReader read = new BufferedReader(new FileReader(file.toFile()))) {
