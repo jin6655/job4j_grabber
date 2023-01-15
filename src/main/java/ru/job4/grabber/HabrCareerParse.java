@@ -21,11 +21,11 @@ private static final int NUMBER_PAGES = 1;
         StringBuilder rsl = new StringBuilder();
         Connection connection = Jsoup.connect(String.format("%s%s", SOURCE_LINK, link));
         Document document = connection.get();
-        Elements rows = document.select(".basic-section--appearance-vacancy-description");
-        rows.stream().forEach(row -> {
+        Elements rows01 = document.select(".basic-section--appearance-vacancy-description");
+        rows01.stream().forEach(row -> {
             Element descriptionTittleElement = row.select(".section-title--divider").first();
-            Element descriptionElement = row.select(".faded-content__container").first();
-            rsl.append(descriptionTittleElement.text()).append("\n").append(descriptionElement.text());
+            Element descriptionElement = row.select(".style-ugc").first();
+            rsl.append(descriptionTittleElement.text()).append("\n").append(descriptionElement.wholeText());
         });
         return rsl.toString();
     }
