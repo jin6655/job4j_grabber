@@ -5,7 +5,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import ru.job4.model.Post;
 import ru.job4.utils.DateTimeParser;
 import ru.job4.utils.HabrCareerDateTimeParser;
 
@@ -19,7 +18,7 @@ public class HabrCareerParse implements Parse {
 
 private static final String SOURCE_LINK = "https://career.habr.com";
 private static final String PAGE_LINK = String.format("%s/vacancies/java_developer", SOURCE_LINK);
-private static final int NUMBER_PAGES = 1;
+private static final int NUMBER_PAGES = 5;
 private final DateTimeParser dateTimeParser;
 
     public HabrCareerParse(DateTimeParser dateTimeParser) {

@@ -1,11 +1,9 @@
-package ru.job4.inst;
+package ru.job4.xinst;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class EchoServer {
 

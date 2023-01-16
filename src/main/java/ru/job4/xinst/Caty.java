@@ -1,7 +1,4 @@
-package ru.job4.inst;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+package ru.job4.xinst;
 
 public class Caty {
 
