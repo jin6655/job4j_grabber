@@ -18,7 +18,7 @@ public class HabrCareerParse implements Parse {
 
 private static final String SOURCE_LINK = "https://career.habr.com";
 private static final String PAGE_LINK = String.format("%s/vacancies/java_developer", SOURCE_LINK);
-private static final int NUMBER_PAGES = 5;
+private static final int NUMBER_PAGES = 2;
 private final DateTimeParser dateTimeParser;
 
     public HabrCareerParse(DateTimeParser dateTimeParser) {
@@ -33,17 +33,18 @@ private final DateTimeParser dateTimeParser;
         rows01.stream().forEach(row -> {
             Element descriptionTittleElement = row.select(".section-title--divider").first();
             Element descriptionElement = row.select(".style-ugc").first();
-            rsl.append(descriptionTittleElement.text()).append("\n").append(descriptionElement.wholeText());
+            rsl.append(descriptionTittleElement.text()).append("\n").append(descriptionElement.text());
         });
-        return rsl.toString();
+        return rsl.toString().replace("'", "|");
     }
 
     @Override
-    public List<Post> list(String link) throws IOException {
+    public List<Post> list() throws IOException {
+        System.out.println("Старт парсинга");
         List<Post> list = new ArrayList<>();
         for (int n = 1; n <= NUMBER_PAGES; n++) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            Connection connection = Jsoup.connect(String.format("%s%s" + n, link, "?page="));
+            Connection connection = Jsoup.connect(String.format("%s%s" + n, PAGE_LINK, "?page="));
                 Document document = connection.get();
                 Elements rows = document.select(".vacancy-card__inner");
                 rows.stream().forEach(row -> {
@@ -64,12 +65,13 @@ private final DateTimeParser dateTimeParser;
                     list.add(new Post(vacancyName, linkPost, description, date));
                 });
         }
+        System.out.println("Выполнен парсинг " + list.size() + " вакансий.");
         return list;
     }
 
     public static void main(String[] args) throws IOException {
         Parse parse = new HabrCareerParse(new HabrCareerDateTimeParser());
-        List<Post> list = parse.list(PAGE_LINK);
+        List<Post> list = parse.list();
         System.out.println(list.size());
     }
 
