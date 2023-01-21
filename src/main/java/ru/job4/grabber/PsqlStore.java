@@ -1,5 +1,8 @@
 package ru.job4.grabber;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -15,6 +18,7 @@ import java.util.Properties;
 public class PsqlStore implements Store, AutoCloseable {
 
     private Connection cnn;
+    private static final Logger LOG = LoggerFactory.getLogger(Post.class.getName());
 
     public PsqlStore(Properties  cfg) throws SQLException {
         try {
@@ -45,7 +49,7 @@ public class PsqlStore implements Store, AutoCloseable {
             );
             statement.execute(sql);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Ошибка сохранения объекта в БД - {}", e);
         }
     }
 

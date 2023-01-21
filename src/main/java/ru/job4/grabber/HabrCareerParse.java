@@ -5,6 +5,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.job4.utils.DateTimeParser;
 import ru.job4.utils.HabrCareerDateTimeParser;
 
@@ -18,8 +20,9 @@ public class HabrCareerParse implements Parse {
 
 private static final String SOURCE_LINK = "https://career.habr.com";
 private static final String PAGE_LINK = String.format("%s/vacancies/java_developer", SOURCE_LINK);
-private static final int NUMBER_PAGES = 2;
+private static final int NUMBER_PAGES = 1;
 private final DateTimeParser dateTimeParser;
+private static final Logger LOG = LoggerFactory.getLogger(HabrCareerParse.class.getName());
 
     public HabrCareerParse(DateTimeParser dateTimeParser) {
         this.dateTimeParser = dateTimeParser;
@@ -40,7 +43,7 @@ private final DateTimeParser dateTimeParser;
 
     @Override
     public List<Post> list() throws IOException {
-        System.out.println("Старт парсинга");
+        LOG.info("Старт парсинга");
         List<Post> list = new ArrayList<>();
         for (int n = 1; n <= NUMBER_PAGES; n++) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -65,7 +68,7 @@ private final DateTimeParser dateTimeParser;
                     list.add(new Post(vacancyName, linkPost, description, date));
                 });
         }
-        System.out.println("Выполнен парсинг " + list.size() + " вакансий.");
+        LOG.info("Выполнен парсинг {} вакансий.", list.size());
         return list;
     }
 
