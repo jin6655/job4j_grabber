@@ -1,25 +1,30 @@
 package ru.job4.xinst;
 
-public class Caty {
+import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
-    private int num;
-    private String name;
+import java.io.IOException;
 
-    public Caty(int num, String name) {
-        this.num = num;
-        this.name = name;
+public class Caty extends Application {
+
+    public static void main(String[] args) {
+        launch(args);
     }
 
     @Override
-    public String toString() {
-        return "Caty{" +
-                "num=" + num +
-                ", name='" + name + '\'' +
-                '}';
+    public void start(Stage primaryStage) throws Exception {
+        primaryStage.setScene(new Scene(new StackPane(new Text("Hello")), 300, 300));
+        primaryStage.setTitle("Title");
+        primaryStage.setMaxWidth(600);
+        primaryStage.setMaxHeight(600);
+        primaryStage.show();
     }
 
-    public static void main(String[] args) throws CloneNotSupportedException {
-        Caty cat = new Caty(1, "sd");
-        System.out.println(Integer.BYTES);
-    }
 }

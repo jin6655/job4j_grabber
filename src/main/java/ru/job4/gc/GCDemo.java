@@ -16,7 +16,6 @@ public class GCDemo {
         System.out.printf("Max: %d%n", maxMemory / MB);
     }
 
-
     public static void main(String[] args) {
         info();
         for (int i = 0; i < 10000; i++) {
